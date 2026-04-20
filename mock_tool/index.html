@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADPILOT for Submission</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Layer -->
+    <div id="login-screen" class="full-screen-overlay">
+        <div class="login-modal">
+            <div class="brand-logo">ADPILOT<small>for Submission</small></div>
+            <p>プロジェクト管理・入稿一括作成ツール</p>
+            <div class="login-form-box">
+                <div class="login-input-row"><i class="fas fa-user"></i><input type="text" value="flinters@example.com"></div>
+                <div class="login-input-row"><i class="fas fa-lock"></i><input type="password" value="********"></div>
+                <button class="btn btn-primary btn-full" id="btn-login-exec">ログイン</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Selection Layer -->
+    <div id="account-selection-screen" class="full-screen-overlay" style="display:none; background:#0f172a;">
+        <div class="login-modal" style="width:480px;">
+            <h2>アカウントを選択</h2>
+            <div class="account-grid">
+                <div class="account-card btn-account-select" data-account="Flinters Store">
+                    <div class="acc-meta"><strong>Flinters Store</strong><small>Meta, Google, Yahoo!</small></div>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="account-card btn-account-select" data-account="Brand-X Project">
+                    <div class="acc-meta"><strong>Brand-X Project</strong><small>LINE, TikTok</small></div>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Container -->
+    <div class="app-root" id="app-root" style="display:none;">
+        <input type="file" id="global-image-uploader" style="display:none;" accept="image/*">
+        
+        <!-- Side Navigation -->
+        <nav class="app-sidebar">
+            <div class="sidebar-header">AP<span>Sub</span></div>
+            <ul class="nav-list">
+                <li class="nav-item active" data-view="dashboard"><i class="fas fa-home"></i><span>ダッシュボード</span></li>
+                <li class="nav-item" data-view="creation"><i class="fas fa-plus-square"></i><span>新規入稿作成</span></li>
+                <li class="nav-item" data-view="campaigns"><i class="fas fa-sitemap"></i><span>キャンペーン管理</span></li>
+                <li class="nav-item" data-view="status"><i class="fas fa-tasks"></i><span>ステータス</span><span class="nav-badge">2</span></li>
+                <li class="nav-item" data-view="settings"><i class="fas fa-cog"></i><span>設定</span></li>
+            </ul>
+        </nav>
+
+        <!-- Main Workspace -->
+        <main class="app-workspace">
+            <header class="app-header">
+                <div class="header-left">
+                    <div class="project-switcher" id="project-switcher-toggle">
+                        <i class="fas fa-building"></i> <span id="current-project-name">Flinters Store</span> <i class="fas fa-caret-down"></i>
+                    </div>
+                    <div class="switcher-dropdown" id="project-dropdown">
+                        <div class="dropdown-item" data-acc="Flinters Store">Flinters Store</div>
+                        <div class="dropdown-item" data-acc="Brand-X Project">Brand-X Project</div>
+                        <div class="dropdown-sep"></div>
+                        <div class="dropdown-item" id="btn-logout">アカウント選択へ戻る</div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <span class="user-id">flinters</span>
+                    <div class="user-avatar">FL</div>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div id="view-dashboard" class="view-pane active">
+                <div class="view-content">
+                    <div class="section-head"><h2>ダッシュボード</h2></div>
+                    <div class="stats-row">
+                        <div class="stat-card"><span>進行中の入稿</span><div class="stat-val">12</div></div>
+                        <div class="stat-card"><span>今月の送信数</span><div class="stat-val">148</div></div>
+                        <div class="stat-card"><span>媒体別比率</span><div class="stat-chart-mock"></div></div>
+                    </div>
+                    <div class="recent-box mt-30">
+                        <h3>最近のアクティビティ</h3>
+                        <div class="activity-line"><span>Meta Ads の承認が完了しました</span><small>2時間前</small></div>
+                        <div class="activity-line"><span>SALEキャンペーン素材が追加されました</span><small>5時間前</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Creation View -->
+            <div id="view-creation" class="view-pane">
+                <header class="flow-header">
+                    <div class="flow-stepper">
+                        <div class="step active" data-s="1"><span>1</span>素材・テキスト</div>
+                        <div class="step" data-s="2"><span>2</span>配信先設定</div>
+                        <div class="step" data-s="3"><span>3</span>データ生成</div>
+                        <div class="step" data-s="4"><span>4</span>最終確認</div>
+                    </div>
+                    <div class="flow-btns">
+                        <button class="btn btn-secondary" id="btn-flow-prev" style="display:none;">戻る</button>
+                        <button class="btn btn-primary" id="btn-flow-next">次へ進む</button>
+                    </div>
+                </header>
+                <div class="creation-layout-split">
+                    <div class="creation-editor">
+                        <!-- Step 1 Pane -->
+                        <div id="pane-1" class="pane active">
+                            <div id="creative-cards-list">
+                                <div class="creative-set-card" data-id="1">
+                                    <div class="set-card-head">
+                                        <div class="set-card-title"><span class="idx">01</span> 素材セット A</div>
+                                        <div class="set-card-ops">
+                                            <button class="btn-icon btn-copy-card" title="複製"><i class="fas fa-copy"></i></button>
+                                            <button class="btn-icon btn-del-card" title="削除"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="set-card-body">
+                                        <div class="asset-panel">
+                                            <div class="asset-slot logo-box">
+                                                <small>ロゴ</small>
+                                                <div class="upload-area u-logo"><div class="thumb logo-preview empty"></div></div>
+                                            </div>
+                                            <div class="main-image-slots">
+                                                <div class="asset-slot image-box">
+                                                    <div class="slot-mode"><button class="m-btn active" data-m="auto">自動</button><button class="m-btn" data-m="manual">個別</button></div>
+                                                    <div class="upload-area u-main"><div class="thumb main-preview empty"></div></div>
+                                                    <div class="auto-thumbs">
+                                                        <div class="at"><div class="att"></div><span>1:1</span></div>
+                                                        <div class="at"><div class="att"></div><span>1.91:1</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-secondary btn-sm btn-add-img-slot"><i class="fas fa-plus"></i> メイン画像を追加</button>
+                                        </div>
+                                        <div class="fields-panel">
+                                            <div class="field-group">
+                                                <div class="field-label-row"><span>見出し案</span><button class="btn-add-field" data-type="headline">+</button></div>
+                                                <div class="field-container headline-container">
+                                                    <div class="field-row">
+                                                        <div class="field-check"><i class="fas fa-check-circle"></i></div>
+                                                        <div class="field-input-box"><input type="text" class="input-headline" value="【公式】ADPILOTストア"><div class="field-counter"></div></div>
+                                                        <button class="btn-del-field">×</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="field-group">
+                                                <div class="field-label-row"><span>本文案</span><button class="btn-add-field" data-type="body">+</button></div>
+                                                <div class="field-container body-container">
+                                                    <div class="field-row">
+                                                        <div class="field-check"><i class="fas fa-check-circle"></i></div>
+                                                        <div class="field-input-box"><textarea class="input-body">最新のトレンドをADPILOTで一括管理。期間限定セール実施中！</textarea><div class="field-counter"></div></div>
+                                                        <button class="btn-del-field">×</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="field-group">
+                                                <div class="field-label-row"><span>媒体別固有項目</span></div>
+                                                <div class="platform-inputs">
+                                                    <div class="f-item"><label>Meta 説明文</label><input type="text" class="input-meta-desc saas-input" value="詳細はこちら"></div>
+                                                    <div class="f-item"><label>Google 長い見出し</label><input type="text" class="input-google-long saas-input" value="国内最大級の品揃えをチェック。"></div>
+                                                    <div class="f-item"><label>Yahoo! リンクテキスト</label><input type="text" class="input-yahoo-link saas-input" value="詳しくはこちら"></div>
+                                                </div>
+                                            </div>
+                                            <div class="field-group-row">
+                                                <div class="f-item"><label>CTAボタン</label><select class="input-cta saas-input"><option>詳細を見る</option><option>今すぐ購入</option></select></div>
+                                                <div class="f-item"><label>計測プリセット</label><select class="input-preset saas-input"><option>Default</option></select></div>
+                                            </div>
+                                            <div class="f-item mt-10"><label>最終遷移先URL</label><input type="text" class="input-url saas-input" value="https://shop.example.com"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary btn-full mt-20" id="btn-add-set-final"><i class="fas fa-plus"></i> 新しい素材セットを追加</button>
+                        </div>
+                        <!-- Step 2 Pane -->
+                        <div id="pane-2" class="pane">
+                            <div class="view-title"><h2>配信先設定</h2><p>媒体とターゲットを紐付けます。</p></div>
+                            <div class="table-container-card">
+                                <table class="matrix-table" id="flow-matrix-table">
+                                    <thead><tr><th>媒体</th><th>キャンペーン</th><th>アドセット</th><th>素材セット</th><th></th></tr></thead>
+                                    <tbody>
+                                        <tr class="matrix-row">
+                                            <td><select class="sel-media"><option value="Meta">Meta Ads</option><option value="Google">Google Ads</option><option value="Yahoo">Yahoo! JAPAN</option></select></td>
+                                            <td><select class="sel-cp"><option>キャンペーン選択</option></select></td>
+                                            <td><select class="sel-as"><option>アドセット選択</option></select></td>
+                                            <td><div class="multi-select-custom"><div class="ms-label">素材セット 1</div><div class="ms-popover"></div></div></td>
+                                            <td><button class="btn-icon btn-del-matrix"><i class="fas fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button class="btn btn-secondary mt-20" id="btn-add-matrix-row"><i class="fas fa-plus"></i> 配信先を追加</button>
+                        </div>
+                        <!-- Step 3 & 4 Panes -->
+                        <div id="pane-3" class="pane"><div id="step-3-gen-box"></div></div>
+                        <div id="pane-4" class="pane"><div id="step-4-final-box"></div></div>
+                    </div>
+
+                    <!-- Right Preview Panel -->
+                    <aside class="app-preview-panel">
+                        <div class="p-header">
+                            <h3>プレビュー</h3>
+                            <div class="p-navigation">
+                                <button id="p-prev-btn"><i class="fas fa-chevron-left"></i></button>
+                                <span id="p-current-info">案 1/1</span>
+                                <button id="p-next-btn"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="p-scroll-area">
+                            <div class="preview-card meta-card">
+                                <div class="pc-head"><div class="pc-avatar ref-logo"></div><div><strong>ADPILOT Sub</strong><br><small>Sponsored</small></div></div>
+                                <div class="pc-body ref-body">...</div>
+                                <div class="pc-img ref-img"></div>
+                                <div class="pc-foot"><div>SHOP.COM</div><button class="btn-pc ref-cta">詳細</button></div>
+                            </div>
+                            <div class="preview-card google-card">
+                                <div class="pc-url">shop.example.com</div>
+                                <div class="pc-title ref-headline">...</div>
+                                <div style="display:flex; gap:10px;"><div class="pc-body ref-body" style="flex:1">...</div><div class="pc-mini-img ref-img"></div></div>
+                            </div>
+                            <div class="preview-card yahoo-card">
+                                <div class="pc-img ref-img"></div>
+                                <div class="pc-title ref-headline">...</div>
+                                <div class="pc-body ref-body">...</div>
+                            </div>
+                            <div class="preview-card line-card">
+                                <div class="pc-head"><div class="pc-avatar ref-logo"></div><strong>ADPILOT official</strong></div>
+                                <div class="pc-img ref-img"></div>
+                                <div class="pc-text ref-headline">...</div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- Campaign Mgmt -->
+            <div id="view-campaigns" class="app-view">
+                <div class="view-content">
+                    <div class="header-row">
+                        <h2>キャンペーン・アドセット管理</h2>
+                        <div class="actions"><button class="btn btn-primary" id="btn-cp-new">キャンペーン登録</button><button class="btn btn-secondary" id="btn-as-new">アドセット登録</button></div>
+                    </div>
+                    <div class="media-tab-row mt-20">
+                        <button class="plt-tab active" data-plt="Meta">Meta</button><button class="plt-tab" data-plt="Google">Google</button><button class="plt-tab" data-plt="Yahoo">Yahoo!</button>
+                    </div>
+                    <div class="table-container-card mt-20">
+                        <table class="saas-table">
+                            <thead><tr><th>種類</th><th>名称</th><th>ステータス</th><th>予算/目的/ターゲット</th><th>操作</th></tr></thead>
+                            <tbody id="mgmt-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status View -->
+            <div id="view-status" class="app-view">
+                <div class="view-content">
+                    <div class="view-title"><h2>入稿ステータス管理</h2></div>
+                    <h3 class="mt-20">対応が必要なタスク</h3>
+                    <div class="table-container-card mt-10 mb-40"><table class="saas-table"><tbody id="status-todo-list"></tbody></table></div>
+                    <h3>入稿履歴</h3>
+                    <div class="table-container-card mt-10"><table class="saas-table"><tbody id="status-hist-list"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="view-settings" class="app-view">
+                <div class="view-content" id="settings-root"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="modal-layer">
+        <div class="modal-window">
+            <button class="btn-modal-close"><i class="fas fa-times"></i></button>
+            <div id="modal-body-content"></div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btn-modal-save-exec">保存する</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
