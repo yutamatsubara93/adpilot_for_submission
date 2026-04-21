@@ -1,0 +1,25 @@
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --sidebar-bg: #0f172a;
+    --bg-main: #f8fafc;
+    --border: #e2e8f0;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --danger: #ef4444;
+    --success: #10b981;
+    --warn: #f59e0b;
+    --meta: #1877f2;
+    --google: #ea4335;
+    --yahoo: #ff0033;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+    font-family: 'Avenir Next', 'Avenir', 'Montserrat', 'Noto Sans JP', sans-serif; 
+    color: var(--text-main); 
+    background: var(--bg-main); 
+    overflow: hidden; 
+    height: 100vh; 
+    font-size: 13px; 
+}
