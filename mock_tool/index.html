@@ -92,18 +92,16 @@
                         <div class="stat-card">
                             <span>進行中の入稿</span>
                             <div class="stat-val">12</div>
-                            <small class="trend up"><i class="fas fa-arrow-up"></i> 2件増加</small>
                         </div>
                         <div class="stat-card">
                             <span>今月の入稿数</span>
                             <div class="stat-val">148</div>
-                            <small class="trend"><i class="fas fa-calendar-check"></i> 目標まで 52件</small>
                         </div>
                         <div class="recent-box-mini">
                             <h3>最近のアクティビティ</h3>
-                            <div class="activity-line-sm"><span>Meta Ads 承認完了</span><small>2h前</small></div>
-                            <div class="activity-line-sm"><span>SALE素材追加</span><small>5h前</small></div>
-                            <div class="activity-line-sm"><span>Google入稿完了</span><small>1日前</small></div>
+                            <div class="activity-line-sm"><span>山田がMeta Adsの入稿をしました</span><small>2h前</small></div>
+                            <div class="activity-line-sm"><span>佐藤がGoogle Adsの入稿をしました</span><small>5h前</small></div>
+                            <div class="activity-line-sm"><span>SALE素材が追加されました</span><small>1日前</small></div>
                         </div>
                     </div>
                     
@@ -157,17 +155,20 @@
                             <div id="creative-cards-list">
                                 <div class="creative-set-card active" data-id="1">
                                     <div class="set-card-head">
-                                        <div class="set-card-title"><span class="idx set-num">01</span> 素材セット A</div>
+                                        <div class="set-card-title">
+                                            <span class="idx set-num">01</span> 
+                                            <input type="text" class="set-name-input" value="素材セット A">
+                                        </div>
                                         <div class="set-card-ops">
                                             <button class="btn btn-secondary btn-sm btn-apply-preview"><i class="fas fa-sync-alt"></i> プレビューに反映</button>
-                                            <button class="btn-op btn-copy-card" title="複製"><i class="fas fa-copy"></i></button>
-                                            <button class="btn-op btn-del-card" title="削除"><i class="fas fa-trash-alt"></i></button>
+                                            <button class="btn btn-secondary btn-sm btn-copy-card" title="複製"><i class="fas fa-copy"></i> 複製</button>
+                                            <button class="btn btn-secondary btn-sm btn-del-card" title="削除"><i class="fas fa-trash-alt"></i> 削除</button>
                                         </div>
                                     </div>
                                     <div class="set-card-body">
                                         <div class="asset-panel">
                                             <div class="asset-slot logo-box-minimal">
-                                                <small>ブランドロゴ (1:1)</small>
+                                                <span class="section-sub-title">ブランドロゴ (1:1)</span>
                                                 <div class="upload-area-logo sq u-logo" title="クリックしてロゴをアップロード">
                                                     <div class="thumb logo-preview empty"></div>
                                                     <div class="upload-placeholder">
@@ -177,6 +178,7 @@
                                                 </div>
                                             </div>
                                             <div class="main-image-slots">
+                                                <span class="section-sub-title">画像</span>
                                                 <div class="asset-slot image-box">
                                                     <div class="slot-mode">
                                                         <button class="m-btn active" data-m="auto">自動</button>
@@ -282,11 +284,12 @@
                             <div class="view-title"><h2>配信先設定</h2><p>媒体とターゲットを紐付けます。</p></div>
                             <div class="table-container-card">
                                 <table class="matrix-table" id="flow-matrix-table">
-                                    <thead><tr><th>媒体</th><th>キャンペーン</th><th>アドセット</th><th>素材セット</th><th></th></tr></thead>
+                                    <thead><tr><th>媒体</th><th>キャンペーン</th><th>アドセット</th><th>使用する素材セット</th><th></th></tr></thead>
                                     <tbody>
                                         <tr class="matrix-row">
                                             <td>
-                                                <select class="sel-media">
+                                                <select class="sel-media saas-input">
+                                                    <option value="">媒体を選択</option>
                                                     <option value="Meta">Meta Ads</option>
                                                     <option value="Google">Google Ads</option>
                                                     <option value="Yahoo">Yahoo! JAPAN</option>
@@ -295,9 +298,16 @@
                                                     <option value="X">X Ads</option>
                                                 </select>
                                             </td>
-                                            <td><select class="sel-cp"><option>キャンペーン選択</option></select></td>
-                                            <td><select class="sel-as"><option>アドセット選択</option></select></td>
-                                            <td><div class="ms-box"><div class="ms-label">素材セット 1</div><div class="ms-popover"></div></div></td>
+                                            <td><select class="sel-cp saas-input"><option>キャンペーン選択</option></select></td>
+                                            <td><select class="sel-as saas-input"><option>アドセット選択</option></select></td>
+                                            <td>
+                                                <div class="ms-box">
+                                                    <div class="ms-label"><span>全て</span> <i class="fas fa-chevron-down"></i></div>
+                                                    <div class="ms-popover">
+                                                        <label class="ms-item"><input type="checkbox" checked data-id="1"> <span>素材セット A</span></label>
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td><button class="btn-icon btn-del-matrix"><i class="fas fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
@@ -337,7 +347,10 @@
                             <!-- Meta -->
                             <div class="preview-card meta-card">
                                 <div class="pc-platform-tag tag-meta"><i class="fab fa-facebook"></i> Meta</div>
-                                <div class="pc-head"><div class="pc-avatar ref-logo"></div><div><strong>ADPILOT Sub</strong><br><small>Sponsored</small></div></div>
+                                <div class="pc-head">
+                                    <div class="pc-avatar ref-logo"></div>
+                                    <div class="pc-head-text"><strong>ADPILOT Sub</strong><small>Sponsored</small></div>
+                                </div>
                                 <div class="pc-body ref-body">...</div>
                                 <div class="pc-img ref-img"></div>
                                 <div class="pc-foot"><div>SHOP.COM</div><button class="btn-pc ref-cta">詳細</button></div>
@@ -345,13 +358,11 @@
                             <!-- Google -->
                             <div class="preview-card google-card">
                                 <div class="pc-platform-tag tag-google"><i class="fab fa-google"></i> Google</div>
-                                <div class="pc-content">
-                                    <div class="pc-url">shop.example.com</div>
-                                    <div class="pc-title ref-headline">...</div>
-                                    <div class="pc-grid-2">
-                                        <div class="pc-body ref-body">...</div>
-                                        <div class="pc-mini-img ref-img"></div>
-                                    </div>
+                                <div class="pc-url">shop.example.com</div>
+                                <div class="pc-title ref-headline">...</div>
+                                <div class="pc-grid-2">
+                                    <div class="pc-body ref-body">...</div>
+                                    <div class="pc-mini-img ref-img"></div>
                                 </div>
                             </div>
                             <!-- Yahoo -->
@@ -364,9 +375,12 @@
                             <!-- LINE -->
                             <div class="preview-card line-card">
                                 <div class="pc-platform-tag tag-line"><i class="fab fa-line"></i> LINE</div>
-                                <div class="pc-head"><div class="pc-avatar ref-logo"></div><strong>ADPILOT Store</strong></div>
+                                <div class="pc-head">
+                                    <div class="pc-avatar ref-logo"></div>
+                                    <div class="pc-head-text"><strong>ADPILOT Store</strong><small>Official Account</small></div>
+                                </div>
                                 <div class="pc-img ref-img"></div>
-                                <div class="pc-body ref-headline">...</div>
+                                <div class="pc-title ref-headline" style="margin-top:12px;">...</div>
                             </div>
                             <!-- TikTok -->
                             <div class="preview-card tiktok-card">
@@ -374,14 +388,20 @@
                                 <div class="pc-img-tiktok ref-img">
                                     <div class="tiktok-overlay">
                                         <div class="tiktok-side"><i class="fas fa-heart"></i><i class="fas fa-comment"></i><i class="fas fa-share"></i></div>
-                                        <div class="tiktok-bottom"><strong>@adpilot_store</strong><p class="ref-body">...</p></div>
+                                        <div class="tiktok-bottom">
+                                            <strong>@adpilot_store</strong>
+                                            <p class="ref-body">...</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <!-- X -->
                             <div class="preview-card x-card">
                                 <div class="pc-platform-tag tag-x"><i class="fab fa-x-twitter"></i> X</div>
-                                <div class="pc-head"><div class="pc-avatar ref-logo"></div><div><strong>ADPILOT official</strong><br><small>@adpilot_sub</small></div></div>
+                                <div class="pc-head">
+                                    <div class="pc-avatar ref-logo"></div>
+                                    <div class="pc-head-text"><strong>ADPILOT official</strong><small>@adpilot_sub</small></div>
+                                </div>
                                 <div class="pc-body ref-body">...</div>
                                 <div class="pc-img ref-img"></div>
                             </div>

@@ -11,9 +11,11 @@ window.updateCounters = function(card) {
         const len = inp.value.length;
         const type = inp.classList.contains('input-headline') ? 'headline' : 'body';
         let errors = [];
-        Object.entries(window.LIMITS[type]).forEach(([plt, lim]) => { 
-            if(len > lim) errors.push(`${plt}(${lim}字)`); 
-        });
+        if (window.LIMITS && window.LIMITS[type]) {
+            Object.entries(window.LIMITS[type]).forEach(([plt, lim]) => { 
+                if(len > lim) errors.push(`${plt}(${lim}字)`); 
+            });
+        }
         
         cnt.innerText = `${len}文字`;
         if (errors.length) {
@@ -34,6 +36,18 @@ window.handleCreationClick = function(e, state, showToast) {
         card.classList.add('active');
     }
 
+    // Platform Tab Switching
+    const pTab = e.target.closest('.p-tab');
+    if (pTab) {
+        const section = pTab.closest('.plat-specific-section');
+        section.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
+        pTab.classList.add('active');
+        const plat = pTab.dataset.p;
+        section.querySelectorAll('.plat-pane').forEach(p => {
+            p.classList.toggle('active', p.dataset.p === plat);
+        });
+    }
+
     // Mock Upload
     if (e.target.closest('.upload-area-logo, .upload-area, .upload-area-sm')) {
         const area = e.target.closest('.upload-area-logo, .upload-area, .upload-area-sm');
@@ -48,18 +62,23 @@ window.handleCreationClick = function(e, state, showToast) {
         window.renderPreview(state.activeCardId);
     }
 
-    // Add Manual Slot
+    // Add Manual Slot with Ratio Class
     if (e.target.closest('.btn-add-manual-slot')) {
         const box = e.target.closest('.mode-pane-manual');
         const size = box.querySelector('.sel-add-size').value;
         const grid = box.querySelector('.manual-upload-grid');
         
+        let ratioClass = "u-1-1";
+        if (size === "1.91:1") ratioClass = "u-191-1";
+        if (size === "4:5") ratioClass = "u-4-5";
+        if (size === "9:16") ratioClass = "u-9-16";
+
         const div = document.createElement('div');
         div.className = 'm-slot';
         div.innerHTML = `
             <button class="btn-del-slot">×</button>
             <small>${size}</small>
-            <div class="upload-area-sm">
+            <div class="upload-area-sm ${ratioClass}">
                 <div class="thumb empty"></div>
                 <i class="fas fa-plus"></i>
             </div>`;
@@ -86,21 +105,43 @@ window.handleCreationClick = function(e, state, showToast) {
         const container = btn.closest('.field-group').querySelector('.field-container');
         const row = document.createElement('div');
         row.className = 'field-row';
-        const inputHtml = type === 'headline' ? `<input type="text" class="input-headline">` : `<textarea class="input-body"></textarea>`;
+        const inputHtml = type === 'headline' ? `<input type="text" class="input-headline" placeholder="見出しを入力">` : `<textarea class="input-body" placeholder="本文を入力"></textarea>`;
         row.innerHTML = `<button class="btn-del-field-top">×</button><div class="field-input-box">${inputHtml}<div class="field-footer-info"><div class="field-counter-side">0文字</div><div class="field-status-side success">OK</div></div></div>`;
         container.appendChild(row);
-        window.updateCounters(card);
+        if (card) window.updateCounters(card);
     }
 
-    // Copy Set
+    // Material Set Management (A, B, C...)
+    function getNextSetName(count) {
+        return String.fromCharCode(65 + (count % 26)); 
+    }
+
     if (e.target.closest('.btn-copy-card')) {
         const source = e.target.closest('.creative-set-card');
         const next = source.cloneNode(true);
-        const count = document.querySelectorAll('.creative-set-card').length + 1;
-        next.dataset.id = count;
-        next.querySelector('.set-num').innerText = count.toString().padStart(2, '0');
+        const count = document.querySelectorAll('.creative-set-card').length;
+        const nextLetter = getNextSetName(count);
+        next.dataset.id = (count + 1).toString();
+        next.classList.remove('active');
+        next.querySelector('.set-num').innerText = next.dataset.id.padStart(2, '0');
+        next.querySelector('.set-name-input').value = `素材セット ${nextLetter}`;
         document.getElementById('creative-cards-list').appendChild(next);
         showToast("素材セットを複製しました");
+    }
+
+    if (e.target.id === 'btn-add-set-final') {
+        const first = document.querySelector('.creative-set-card');
+        const next = first.cloneNode(true);
+        const count = document.querySelectorAll('.creative-set-card').length;
+        const nextLetter = getNextSetName(count);
+        next.dataset.id = (count + 1).toString();
+        next.classList.remove('active');
+        next.querySelector('.set-num').innerText = (count + 1).toString().padStart(2, '0');
+        next.querySelector('.set-name-input').value = `素材セット ${nextLetter}`;
+        next.querySelectorAll('input:not(.set-name-input), textarea').forEach(i => i.value = "");
+        next.querySelectorAll('.thumb').forEach(t => { t.classList.add('empty'); t.style.backgroundImage = 'none'; t.style.display = 'none'; delete t.dataset.img; });
+        document.getElementById('creative-cards-list').appendChild(next);
+        showToast("新しい素材セットを追加しました");
     }
 
     // Delete Logic
@@ -109,45 +150,93 @@ window.handleCreationClick = function(e, state, showToast) {
         if (container.children.length > 1) e.target.closest('.field-row').remove();
         window.renderPreview(state.activeCardId);
     }
-
     if (e.target.closest('.btn-del-card')) {
         if (document.querySelectorAll('.creative-set-card').length > 1) {
             e.target.closest('.creative-set-card').remove();
             showToast("素材セットを削除しました");
-            document.querySelector('.creative-set-card').click();
+            const first = document.querySelector('.creative-set-card');
+            if(first) first.click();
         }
     }
 
-    // Add Image Set
-    if (e.target.closest('.btn-add-img-slot')) {
-        const container = card.querySelector('.main-image-slots');
-        const first = container.querySelector('.image-box');
-        const next = first.cloneNode(true);
-        next.querySelectorAll('.thumb').forEach(t => { 
-            t.classList.add('empty'); t.style.backgroundImage = 'none'; t.style.display = 'none'; 
-            delete t.dataset.img; 
-        });
-        next.querySelectorAll('.manual-upload-grid').forEach(g => g.innerHTML = '');
-        container.appendChild(next);
-        showToast("画像セットを追加しました");
+    // Step 2: Distribution Rows
+    if (e.target.id === 'btn-add-matrix-row') {
+        const table = document.getElementById('flow-matrix-table').querySelector('tbody');
+        const row = document.createElement('tr');
+        row.className = 'matrix-row';
+        row.innerHTML = `
+            <td>
+                <div class="custom-media-select-wrapper">
+                    <i class="fas fa-layer-group"></i>
+                    <select class="sel-media saas-input">
+                        <option value="">媒体を選択</option>
+                        <option value="Meta" data-logo="fab fa-facebook">Meta Ads</option>
+                        <option value="Google" data-logo="fab fa-google">Google Ads</option>
+                        <option value="Yahoo" data-logo="fas fa-search">Yahoo! JAPAN</option>
+                        <option value="LINE" data-logo="fab fa-line">LINE Ads</option>
+                        <option value="TikTok" data-logo="fab fa-tiktok">TikTok Ads</option>
+                        <option value="X" data-logo="fab fa-x-twitter">X Ads</option>
+                    </select>
+                </div>
+            </td>
+            <td><select class="sel-cp saas-input"><option>キャンペーン選択</option></select></td>
+            <td><select class="sel-as saas-input"><option>アドセット選択</option></select></td>
+            <td>
+                <div class="ms-box">
+                    <div class="ms-label"><span>全て</span> <i class="fas fa-chevron-down"></i></div>
+                    <div class="ms-popover">
+                        ${Array.from(document.querySelectorAll('.creative-set-card')).map(c => `
+                            <label class="ms-item"><input type="checkbox" checked data-id="${c.dataset.id}"> <span>${c.querySelector('.set-name-input').value}</span></label>
+                        `).join('')}
+                    </div>
+                </div>
+            </td>
+            <td><button class="btn-icon btn-del-matrix"><i class="fas fa-trash"></i></button></td>
+        `;
+        table.appendChild(row);
+
+        const sel = row.querySelector('.sel-media');
+        const icon = row.querySelector('.custom-media-select-wrapper i');
+        sel.onchange = () => {
+            const opt = sel.options[sel.selectedIndex];
+            icon.className = (opt.dataset.logo || 'fas fa-layer-group');
+            if (sel.value === 'Meta') icon.style.color = 'var(--meta)';
+            else if (sel.value === 'Google') icon.style.color = 'var(--google)';
+            else if (sel.value === 'Yahoo') icon.style.color = 'var(--yahoo)';
+            else if (sel.value === 'LINE') icon.style.color = 'var(--line)';
+            else icon.style.color = 'inherit';
+            
+            // Trigger change event for app.js to handle campaign loading
+            const event = new Event('change', { bubbles: true });
+            sel.dispatchEvent(event);
+        };
     }
 
-    // Add Set Final
-    if (e.target.id === 'btn-add-set-final') {
-        const first = document.querySelector('.creative-set-card');
-        const next = first.cloneNode(true);
-        const count = document.querySelectorAll('.creative-set-card').length + 1;
-        next.dataset.id = count;
-        next.querySelector('.set-num').innerText = count.toString().padStart(2, '0');
-        next.querySelectorAll('input, textarea').forEach(i => i.value = "");
-        next.querySelectorAll('.thumb').forEach(t => { t.classList.add('empty'); t.style.backgroundImage = 'none'; t.style.display = 'none'; delete t.dataset.img; });
-        document.getElementById('creative-cards-list').appendChild(next);
+    if (e.target.closest('.ms-label')) {
+        const box = e.target.closest('.ms-box');
+        const pop = box.querySelector('.ms-popover');
+        const isActive = pop.classList.contains('active');
+        document.querySelectorAll('.ms-popover').forEach(p => p.classList.remove('active'));
+        if (!isActive) pop.classList.add('active');
+        e.stopPropagation();
     }
 
-    // Apply Preview
-    if (e.target.closest('.btn-apply-preview')) {
-        window.renderPreview(state.activeCardId);
-        showToast("プレビューに反映しました");
+    if (e.target.closest('.ms-item')) {
+        const box = e.target.closest('.ms-box');
+        const checked = box.querySelectorAll('input:checked');
+        const labelText = box.querySelector('.ms-label span');
+        const total = box.querySelectorAll('input').length;
+        if (checked.length === total) labelText.innerText = "全て";
+        else if (checked.length === 0) labelText.innerText = "選択なし";
+        else labelText.innerText = `${checked.length}件選択中`;
+    }
+
+    if (!e.target.closest('.ms-box')) {
+        document.querySelectorAll('.ms-popover').forEach(p => p.classList.remove('active'));
+    }
+
+    if (e.target.closest('.btn-del-matrix')) {
+        e.target.closest('tr').remove();
     }
 };
 
@@ -160,17 +249,21 @@ window.updateFlow = function(state) {
     const preview = document.getElementById('creation-preview-sidebar');
     const pBtn = document.getElementById('btn-open-preview');
 
-    btnPrev.style.display = (state.currentFlowStep > 1 && state.currentFlowStep < 5) ? 'block' : 'none';
-    btnNext.style.display = (state.currentFlowStep < 5) ? 'block' : 'none';
-    btnNext.innerText = state.currentFlowStep === 4 ? "承認依頼を送信" : "次へ進む";
+    if (btnPrev) btnPrev.style.display = (state.currentFlowStep > 1 && state.currentFlowStep < 5) ? 'block' : 'none';
+    if (btnNext) {
+        btnNext.style.display = (state.currentFlowStep < 5) ? 'block' : 'none';
+        btnNext.innerText = state.currentFlowStep === 4 ? "承認依頼を送信" : "次へ進む";
+    }
     
     if (preview) {
         if (state.currentFlowStep > 1) {
             preview.style.display = 'none';
-            if(pBtn) pBtn.style.display = 'none';
+            if(pBtn) {
+                pBtn.style.display = 'none';
+                pBtn.classList.remove('active');
+            }
         } else {
-            preview.style.display = 'flex';
-            if(pBtn) pBtn.style.display = 'block';
+            if(pBtn) pBtn.style.display = 'inline-flex';
         }
     }
 
@@ -188,7 +281,7 @@ function renderStep3() {
     matrixRows.forEach(row => {
         const m = row.querySelector('.sel-media').value;
         const cp = row.querySelector('.sel-cp').value;
-        if (cp === 'キャンペーン選択') return;
+        if (!m || cp === 'キャンペーン選択') return;
         if (!grouped[m]) grouped[m] = [];
         grouped[m].push({ cp, as: row.querySelector('.sel-as').value });
     });
@@ -206,7 +299,7 @@ function renderStep3() {
                         <tr>
                             <td><input type="checkbox" checked></td>
                             <td><small>${item.cp}</small><br><strong>${item.as}</strong></td>
-                            <td><div class="thumb-preview-sm" style="background-image:url('${window.MOCK_IMAGES.main}')"></div></td>
+                            <td><div class="thumb-preview-sm" style="background-image:url('${window.MOCK_IMAGES ? window.MOCK_IMAGES.main : ''}')"></div></td>
                             <td>
                                 <input type="text" class="saas-input mb-5" value="【公式】ADPILOTストア">
                                 <textarea class="saas-input" rows="2">最新のトレンドをADPILOTで一括管理。期間限定セール実施中！</textarea>
@@ -233,7 +326,8 @@ function renderStep4() {
         <tbody>
             ${Array.from(document.querySelectorAll('#pane-3 input[type="checkbox"]:checked')).filter(c => c.closest('tr')).map(chk => {
                 const row = chk.closest('tr');
-                const media = row.closest('.media-group-section').querySelector('.platform-badge').innerText;
+                const mediaBadge = row.closest('.media-group-section').querySelector('.platform-badge');
+                const media = mediaBadge ? mediaBadge.innerText : "Media";
                 return `
                     <tr>
                         <td><span class="platform-badge badge-${media.toLowerCase()}">${media}</span></td>
