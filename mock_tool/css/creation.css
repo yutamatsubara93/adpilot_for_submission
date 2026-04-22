@@ -1,10 +1,11 @@
 /* --- Creation View (Step 1-4) --- */
-.flow-header { height: 72px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; flex-shrink: 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); z-index: 10; }
+.flow-header { height: 72px; background: white; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; flex-shrink: 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); z-index: 100; }
+.flow-header-left { flex: 1; display: flex; align-items: center; }
 .flow-btns { display: flex; gap: 12px; align-items: center; }
-.flow-stepper { display: flex; gap: 40px; }
-.step { display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-weight: 700; font-size: 0.9rem; }
+.flow-stepper { display: flex; gap: 32px; }
+.step { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-weight: 700; font-size: 0.85rem; }
 .step.active { color: var(--primary); }
-.step span { width: 28px; height: 28px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+.step span { width: 24px; height: 24px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
 .step.active span { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(79,70,229,0.3); }
 
 .creation-layout-split { display: flex; flex: 1; overflow: hidden; }
@@ -31,7 +32,7 @@
 
 /* Assets & Uploads */
 .set-card-body { display: flex; gap: 48px; }
-.asset-panel { width: 300px; flex-shrink: 0; }
+.asset-panel { width: 320px; flex-shrink: 0; }
 .section-sub-title { font-weight: 800; color: var(--text-main); font-size: 0.85rem; margin-bottom: 16px; display: block; border-left: 4px solid var(--primary); padding-left: 10px; }
 
 .logo-box-minimal { margin-bottom: 32px; }
@@ -39,7 +40,11 @@
 .upload-area-logo:hover { border-color: var(--primary); background: #f1f5f9; }
 .upload-area-logo.sq { aspect-ratio: 1; width: 120px; height: 120px; }
 
-.image-box { margin-bottom: 32px; padding: 20px; background: #f8fafc; border-radius: 20px; border: 1px solid var(--border); }
+.main-image-slots-container { display: flex; flex-direction: column; gap: 10px; }
+.main-image-slots { border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 5px; }
+.main-image-slots:last-of-type { border-bottom: none; }
+
+.image-box { margin-bottom: 10px; padding: 20px; background: #f8fafc; border-radius: 20px; border: 1px solid var(--border); }
 .slot-mode { display: flex; background: #e2e8f0; padding: 4px; border-radius: 12px; width: 100%; margin-bottom: 20px; }
 .m-btn { flex: 1; border: none; background: none; padding: 10px; font-size: 0.85rem; font-weight: 800; cursor: pointer; border-radius: 10px; color: var(--text-muted); transition: 0.2s; }
 .m-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -85,8 +90,8 @@
 .field-input-box input, .field-input-box textarea { width: 100%; padding: 14px; border: none; font-size: 1rem; font-family: inherit; outline: none; background: transparent; }
 .field-footer-info { display: flex; justify-content: space-between; padding: 8px 16px; font-weight: 800; font-size: 0.75rem; border-top: 1px solid #f1f5f9; }
 
-.btn-del-field-top { width: 32px; height: 32px; background: white; border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; margin-top: 8px; }
-.btn-del-field-top:hover { color: var(--danger); border-color: var(--danger); background: #fff1f2; }
+.btn-del-field-top { position: absolute; top: -10px; right: -10px; width: 28px; height: 28px; background: white; border: 1px solid var(--border); border-radius: 50%; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 5; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.btn-del-field-top:hover { color: var(--danger); border-color: var(--danger); transform: scale(1.1); }
 
 .btn-add-field-bottom { width: 100%; padding: 12px; background: white; border: 1.5px dashed #cbd5e1; border-radius: 14px; color: var(--text-muted); font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
 .btn-add-field-bottom:hover { border-color: var(--primary); color: var(--primary); background: #f1f5f9; }
@@ -103,17 +108,47 @@
 .plat-pane { display: none; }
 .plat-pane.active { display: block; animation: fadeIn 0.3s; }
 
-/* Step 2: Matrix Table Customizations */
+/* Matrix Step 2 */
 .custom-media-select-wrapper { position: relative; }
 .custom-media-select-wrapper i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
 .sel-media.saas-input { padding-left: 36px; }
 
-/* Delivery Matrix Multiple Select */
-.ms-box { position: relative; width: 100%; }
+.ms-box { position: relative; width: 100%; z-index: 100; }
 .ms-label { background: white; padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); transition: 0.2s; }
 .ms-label:hover { border-color: var(--primary); }
-.ms-popover { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: white; border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100; padding: 12px; }
+.ms-popover { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: white; border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1000 !important; padding: 12px; }
 .ms-popover.active { display: block; animation: fadeIn 0.2s; }
 .ms-item { display: flex; align-items: center; gap: 10px; padding: 10px; cursor: pointer; border-radius: 10px; font-weight: 600; transition: 0.2s; }
 .ms-item:hover { background: #f1f5f9; }
 .ms-item input { width: 18px; height: 18px; accent-color: var(--primary); }
+
+.btn-del-matrix { color: var(--danger); font-size: 1.1rem; padding: 8px; transition: 0.2s; cursor: pointer; border: 1px solid transparent; border-radius: 8px; background: none; }
+.btn-del-matrix:hover { background: #fff1f2; border-color: var(--border); }
+
+/* Step 3 & 4 Specifics */
+.media-group-section { margin-bottom: 40px; }
+.media-group-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-left: 12px; border-left: 5px solid var(--primary); }
+.media-group-header .platform-badge { font-size: 0.9rem; padding: 6px 14px; }
+.media-group-header small { font-weight: 800; color: var(--text-muted); font-size: 0.9rem; }
+
+.size-preview-box { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); width: 100px; }
+.size-preview-box strong { font-size: 0.75rem; color: var(--text-muted); }
+.thumb-preview-ratio { width: 80px; background-size: cover; background-position: center; border: 1px solid var(--border); border-radius: 4px; background-color: #fff; }
+.thumb-preview-ratio.1-1 { aspect-ratio: 1; }
+.thumb-preview-ratio.1.91-1 { aspect-ratio: 1.91; }
+
+.edit-fields-stack { display: flex; flex-direction: column; gap: 6px; }
+.edit-fields-stack input, .edit-fields-stack textarea { font-size: 0.85rem; padding: 8px 12px; }
+.edit-fields-stack .text-muted { font-weight: 700; font-size: 0.75rem; margin-top: 4px; display: block; }
+
+.required-input-box { background: #fffbeb; border: 1px solid #fde68a; padding: 12px; border-radius: 12px; }
+.required-input-box label { display: block; font-weight: 800; font-size: 0.75rem; color: #92400e; margin-bottom: 6px; }
+.danger-border { border-color: #f87171 !important; }
+
+.summary-alert { background: #e0f2fe; color: #0369a1; padding: 16px 24px; border-radius: 16px; margin-bottom: 24px; font-weight: 700; display: flex; align-items: center; gap: 12px; font-size: 1rem; }
+
+/* Success Screen */
+.success-screen { text-align: center; padding: 80px 20px; }
+.success-icon { font-size: 5rem; color: var(--success); margin-bottom: 32px; filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.3)); }
+.success-screen h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 16px; }
+.success-screen p { color: var(--text-muted); font-size: 1.1rem; font-weight: 600; }

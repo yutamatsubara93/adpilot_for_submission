@@ -19,9 +19,7 @@
     flex-direction: column;
     justify-content: center;
     box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-    transition: 0.3s;
 }
-.stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
 .stat-card span { color: var(--text-muted); font-weight: 800; font-size: 1rem; margin-bottom: 12px; }
 .stat-val { font-size: 3.5rem; font-weight: 800; color: var(--primary); }
 
@@ -89,9 +87,7 @@
     align-items: center; 
     gap: 20px; 
     border: 1px solid var(--border); 
-    transition: 0.2s; 
 }
-.ms-card:hover { transform: scale(1.02); border-color: var(--primary); background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .ms-card i { font-size: 1.8rem; width: 32px; text-align: center; }
 .ms-card span { font-weight: 800; flex: 1; font-size: 1rem; }
 .ms-dot { width: 12px; height: 12px; border-radius: 50%; }

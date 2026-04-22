@@ -1,0 +1,56 @@
+/* --- Assets View Specifics --- */
+.asset-type-section h3 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 20px; }
+
+.asset-gallery { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 16px; }
+
+.gallery-item-card { 
+    width: 160px; 
+    background: white; 
+    border: 1px solid var(--border); 
+    border-radius: 20px; 
+    padding: 16px; 
+    text-align: center; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+.gallery-item-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+.g-img { 
+    width: 100%; 
+    aspect-ratio: 1; 
+    background-size: contain; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    background-color: #f8fafc; 
+    border-radius: 12px; 
+    margin-bottom: 12px; 
+    border: 1px solid #f1f5f9;
+}
+
+.gallery-item-card p { 
+    font-size: 0.8rem; 
+    font-weight: 700; 
+    color: var(--text-main); 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+.gallery-item-add { 
+    width: 160px; 
+    aspect-ratio: 1; 
+    border: 2px dashed #cbd5e1; 
+    border-radius: 20px; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    font-size: 1.5rem; 
+    color: #94a3b8; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    background: white;
+}
+.gallery-item-add:hover { border-color: var(--primary); color: var(--primary); background: #f1f5f9; }
+.gallery-item-add::after { content: '素材を追加'; font-size: 0.7rem; font-weight: 800; margin-top: 8px; }
