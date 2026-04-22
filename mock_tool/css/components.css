@@ -84,3 +84,21 @@
 .set-card p { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
 
 @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Tabs Improved */
+.media-tab-row-wrapper { border-bottom: 2px solid var(--border); margin-top: 30px; }
+.media-tab-row { display: flex; gap: 8px; margin-bottom: -2px; }
+.plt-tab { border: 2px solid transparent; background: #f1f5f9; padding: 12px 24px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 12px 12px 0 0; transition: 0.2s; white-space: nowrap; font-size: 0.9rem; }
+.plt-tab:hover { background: #e2e8f0; color: var(--text-main); }
+.plt-tab.active { color: var(--primary); background: white; border-color: var(--border); border-bottom-color: white; }
+
+/* Campaign Mgmt Ops */
+.mgmt-ops { display: flex; gap: 6px; }
+.btn-mgmt-icon { background: white; border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+.btn-mgmt-icon:hover { background: #f1f5f9; border-color: var(--primary); color: var(--primary); }
+
+/* Asset Del */
+.gallery-item-card { position: relative; }
+.btn-asset-del { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background: white; color: var(--danger); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; opacity: 0; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.gallery-item-card:hover .btn-asset-del { opacity: 1; }
+.btn-asset-del:hover { background: var(--danger); color: white; border-color: var(--danger); }

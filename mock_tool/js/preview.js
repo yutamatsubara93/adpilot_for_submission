@@ -12,8 +12,6 @@ window.renderPreview = function(activeCardId) {
     // Collect all assets for variants
     const headlines = Array.from(card.querySelectorAll('.input-headline')).map(i => i.value).filter(v => v);
     const bodies = Array.from(card.querySelectorAll('.input-body')).map(i => i.value).filter(v => v);
-    
-    // Get main images only (exclude logo preview)
     const images = Array.from(card.querySelectorAll('.main-preview, .upload-area-sm .thumb')).map(p => p.dataset.img).filter(img => img);
     
     if (headlines.length === 0) headlines.push("見出しを入力");
@@ -23,7 +21,7 @@ window.renderPreview = function(activeCardId) {
     const logoArea = card.querySelector('.logo-preview');
     const logo = (logoArea && logoArea.dataset.img) ? logoArea.dataset.img : "";
 
-    // Generate Cartesian Product: Images x Headlines x Bodies
+    // Generate Cartesian Product
     window.previewState.variants = [];
     images.forEach(img => {
         headlines.forEach(h => {
@@ -33,27 +31,29 @@ window.renderPreview = function(activeCardId) {
         });
     });
 
-    // Reset index if needed
     if (window.previewState.activeVariantIdx >= window.previewState.variants.length) {
         window.previewState.activeVariantIdx = 0;
     }
 
-    // Update Variant Dots
+    // Update Variant Numerical Selector (Scrollable)
     const nav = document.getElementById('p-variant-nav');
     if (nav) {
-        nav.innerHTML = window.previewState.variants.map((_, i) => `
-            <button class="v-dot ${i === window.previewState.activeVariantIdx ? 'active' : ''}" onclick="window.switchPreviewVariant(${i})">${i+1}</button>
-        `).join('');
+        nav.innerHTML = `
+            <div class="variant-scroll-container">
+                ${window.previewState.variants.map((_, i) => `
+                    <button class="v-num-btn ${i === window.previewState.activeVariantIdx ? 'active' : ''}" 
+                            onclick="window.switchPreviewVariant(${i})">${i + 1}</button>
+                `).join('')}
+            </div>
+        `;
     }
 
     window.updatePreviewContent(logo);
 
-    // Update Info
-    const totalSets = document.querySelectorAll('.creative-set-card').length;
+    // Update Header Info (Only Set Name)
     const info = document.getElementById('p-current-info');
     if (info) {
-        const setLabel = card.querySelector('.set-name-input').value;
-        info.innerText = `${setLabel} (${activeCardId} / ${totalSets})`;
+        info.innerText = card.querySelector('.set-name-input').value;
     }
 };
 
@@ -64,8 +64,9 @@ window.switchPreviewVariant = function(idx) {
     const logo = (logoArea && logoArea.dataset.img) ? logoArea.dataset.img : "";
     window.updatePreviewContent(logo);
     
-    document.querySelectorAll('.v-dot').forEach((dot, i) => {
-        dot.classList.toggle('active', i === idx);
+    // Update active state in UI
+    document.querySelectorAll('.v-num-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
     });
 };
 
@@ -80,7 +81,6 @@ window.updatePreviewContent = function(logo) {
         if (variant.img) {
             el.style.backgroundImage = `url('${variant.img}')`;
             el.style.backgroundSize = 'cover';
-            el.style.backgroundPosition = 'center';
         } else {
             el.style.backgroundImage = "none";
         }
@@ -91,7 +91,6 @@ window.updatePreviewContent = function(logo) {
             el.style.backgroundImage = `url('${logo}')`;
             el.style.backgroundSize = 'contain';
             el.style.backgroundRepeat = 'no-repeat';
-            el.style.backgroundPosition = 'center';
         } else {
             el.style.backgroundImage = "none";
         }

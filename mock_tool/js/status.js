@@ -1,5 +1,7 @@
 /* --- Status & Approval Flow Logic --- */
 
+const currentUser = "山田 太郎"; // Simulate current user
+
 window.renderStatusHistory = function() {
     const actionList = document.getElementById('status-action-list');
     const allList = document.getElementById('status-all-list');
@@ -9,6 +11,26 @@ window.renderStatusHistory = function() {
     allList.innerHTML = '';
 
     window.statusHistory.forEach(item => {
+        let opsHtml = '';
+        const isApplicant = item.creator === currentUser;
+        const isApprover = item.assignee === currentUser;
+
+        if (isApplicant) {
+            if (item.status.includes("差し戻し")) {
+                opsHtml = `<button class="btn btn-sm btn-primary">編集する</button>`;
+            } else if (item.canFinalize) {
+                opsHtml = `<button class="btn btn-sm btn-status-final">最終入稿する</button>`;
+            } else if (!item.isApproved) {
+                opsHtml = `<button class="btn btn-sm btn-secondary">承認依頼中</button>`;
+            } else {
+                opsHtml = `<button class="btn btn-sm btn-secondary btn-status-detail" data-id="${item.id}">詳細を確認</button>`;
+            }
+        } else if (isApprover) {
+            opsHtml = `<button class="btn btn-sm btn-status-approve btn-status-detail" data-id="${item.id}">承認する</button>`;
+        } else {
+            opsHtml = `<button class="btn btn-sm btn-secondary btn-status-detail" data-id="${item.id}">詳細を確認</button>`;
+        }
+
         const row = `
             <tr>
                 <td><small>${item.date}</small></td>
@@ -18,11 +40,13 @@ window.renderStatusHistory = function() {
                 <td>${item.assignee}</td>
                 <td><span class="status-tag ${item.isApproved ? 'done' : 'waiting'}">${item.status}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-secondary btn-status-detail" data-id="${item.id}">詳細を確認</button>
+                    <div class="mgmt-ops">
+                        ${opsHtml}
+                    </div>
                 </td>
             </tr>`;
         
-        if (item.assigned) actionList.innerHTML += row;
+        if (item.assigned && (isApprover || (isApplicant && item.status.includes("差し戻し")))) actionList.innerHTML += row;
         allList.innerHTML += row;
     });
 };

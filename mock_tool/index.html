@@ -57,10 +57,10 @@
         <nav class="app-sidebar">
             <ul class="nav-list">
                 <li class="nav-item active" data-view="dashboard"><i class="fas fa-home"></i><span>ダッシュボード</span></li>
-                <li class="nav-item" data-view="assets"><i class="fas fa-folder-open"></i><span>素材管理</span></li>
                 <li class="nav-item" data-view="creation"><i class="fas fa-plus-square"></i><span>新規入稿作成</span></li>
                 <li class="nav-item" data-view="campaigns"><i class="fas fa-sitemap"></i><span>キャンペーン管理</span></li>
                 <li class="nav-item" data-view="status"><i class="fas fa-tasks"></i><span>ステータス</span><span class="nav-badge">2</span></li>
+                <li class="nav-item" data-view="assets"><i class="fas fa-folder-open"></i><span>素材管理</span></li>
                 <li class="nav-item" data-view="settings"><i class="fas fa-cog"></i><span>設定</span></li>
             </ul>
         </nav>
@@ -134,23 +134,21 @@
                             <p>共通で使用するロゴや背景画像を登録・管理します。</p>
                         </div>
                         <div class="actions">
-                            <button class="btn btn-primary"><i class="fas fa-upload"></i> 新規アップロード</button>
+                            <button class="btn btn-primary" id="btn-asset-upload-open"><i class="fas fa-upload"></i> 新規アップロード</button>
                         </div>
                     </div>
                     <div class="asset-grid-container mt-30">
                         <div class="asset-type-section">
                             <h3>ブランドロゴ</h3>
                             <div class="asset-gallery">
-                                <div class="gallery-item-card"><div class="g-img" style="background-image:url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100')"></div><p>Official_Logo_v1</p></div>
-                                <div class="gallery-item-card"><div class="g-img" style="background-image:url('https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=100')"></div><p>Sub_Logo_Black</p></div>
-                                <div class="gallery-item-add"><i class="fas fa-plus"></i></div>
+                                <div class="gallery-item-card"><div class="g-img" style="background-image:url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100')"></div><p>Official_Logo_v1</p><button class="btn-asset-del"><i class="fas fa-times"></i></button></div>
+                                <div class="gallery-item-card"><div class="g-img" style="background-image:url('https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=100')"></div><p>Sub_Logo_Black</p><button class="btn-asset-del"><i class="fas fa-times"></i></button></div>
                             </div>
                         </div>
                         <div class="asset-type-section mt-40">
                             <h3>共通画像</h3>
                             <div class="asset-gallery">
-                                <div class="gallery-item-card"><div class="g-img" style="background-image:url('https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=200')"></div><p>Background_Winter</p></div>
-                                <div class="gallery-item-add"><i class="fas fa-plus"></i></div>
+                                <div class="gallery-item-card"><div class="g-img" style="background-image:url('https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=200')"></div><p>Background_Winter</p><button class="btn-asset-del"><i class="fas fa-times"></i></button></div>
                             </div>
                         </div>
                     </div>
@@ -178,6 +176,10 @@
                     <div class="creation-editor">
                         <!-- Step 1 Pane -->
                         <div id="pane-1" class="pane active">
+                            <div class="batch-name-section mb-30" style="background: white; padding: 24px; border-radius: 20px; border: 1px solid var(--border);">
+                                <label class="section-sub-title" style="margin-bottom:12px;">入稿案件名 / グループ名</label>
+                                <input type="text" id="input-batch-name" class="saas-input" placeholder="例：2026年春物新作プロモーション" style="font-size: 1.2rem; font-weight: 800; padding: 16px 24px;">
+                            </div>
                             <div id="creative-cards-list">
                                 <div class="creative-set-card active" data-id="1">
                                     <div class="set-card-head">
@@ -308,7 +310,7 @@
                                                         <option value="">媒体を選択</option>
                                                         <option value="Meta" data-logo="fab fa-facebook">Meta Ads</option>
                                                         <option value="Google" data-logo="fab fa-google">Google Ads</option>
-                                                        <option value="Yahoo" data-logo="fas fa-search">Yahoo! JAPAN</option>
+                                                        <option value="Yahoo" data-logo="fab fa-yahoo">Yahoo! JAPAN</option>
                                                         <option value="LINE" data-logo="fab fa-line">LINE Ads</option>
                                                         <option value="TikTok" data-logo="fab fa-tiktok">TikTok Ads</option>
                                                         <option value="X" data-logo="fab fa-x-twitter">X Ads</option>
@@ -341,11 +343,13 @@
                             <div id="step-4-final-summary"></div>
                         </div>
                         <div id="pane-5" class="pane">
-                            <div class="success-screen">
-                                <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-                                <h2>承認依頼を送信しました</h2>
-                                <p>各媒体への入稿申請が完了しました。</p>
-                                <button class="btn btn-primary mt-30" id="btn-success-to-status">ステータス画面へ</button>
+                            <div class="success-screen-container" style="display:flex; align-items:center; justify-content:center; flex:1; min-height:400px;">
+                                <div class="success-screen" style="text-align:center;">
+                                    <div class="success-icon" style="font-size: 5rem; color: var(--success); margin-bottom: 24px;"><i class="fas fa-check-circle"></i></div>
+                                    <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 12px;">承認依頼を送信しました</h2>
+                                    <p style="color: var(--text-muted); font-weight: 600;">各媒体への入稿申請が完了しました。</p>
+                                    <button class="btn btn-primary mt-40" id="btn-success-to-status">ステータス画面へ</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -356,9 +360,7 @@
                             <div class="p-header-top">
                                 <h3>プレビュー</h3>
                                 <div class="p-navigation">
-                                    <button id="p-nav-prev" class="btn-nav"><i class="fas fa-chevron-left"></i></button>
-                                    <span id="p-current-info">素材セット 1 (1 / 1)</span>
-                                    <button id="p-nav-next" class="btn-nav"><i class="fas fa-chevron-right"></i></button>
+                                    <span id="p-current-info">素材セット A</span>
                                 </div>
                             </div>
                             <div class="p-variant-selector" id="p-variant-nav">
@@ -380,7 +382,7 @@
                                 <div class="pc-grid-2"><div class="pc-body ref-body">...</div><div class="pc-mini-img ref-img"></div></div>
                             </div>
                             <div class="preview-card yahoo-card">
-                                <div class="pc-platform-tag tag-yahoo"><i class="fas fa-search"></i> Yahoo!</div>
+                                <div class="pc-platform-tag tag-yahoo"><i class="fab fa-yahoo"></i> Yahoo!</div>
                                 <div class="pc-img ref-img"></div>
                                 <div class="pc-title ref-headline">...</div>
                                 <div class="pc-body ref-body">...</div>
@@ -389,6 +391,29 @@
                                 <div class="pc-platform-tag tag-line"><i class="fab fa-line"></i> LINE</div>
                                 <div class="pc-head"><div class="pc-avatar ref-logo"></div><div class="pc-head-text"><strong>ADPILOT Store</strong><small>Official Account</small></div></div>
                                 <div class="pc-img ref-img"></div><div class="pc-title ref-headline" style="margin-top:12px;">...</div>
+                            </div>
+                            <div class="preview-card tiktok-card">
+                                <div class="pc-platform-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</div>
+                                <div class="pc-img-tiktok ref-img">
+                                    <div class="tiktok-overlay">
+                                        <div class="tiktok-bottom">
+                                            <strong class="ref-headline">...</strong>
+                                            <p class="ref-body">...</p>
+                                        </div>
+                                    </div>
+                                    <div class="tiktok-side">
+                                        <i class="fas fa-heart"></i>
+                                        <i class="fas fa-comment-dots"></i>
+                                        <i class="fas fa-share"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="preview-card x-card">
+                                <div class="pc-platform-tag tag-x"><i class="fab fa-x-twitter"></i> X</div>
+                                <div class="pc-head"><div class="pc-avatar ref-logo"></div><div class="pc-head-text"><strong>ADPILOT Sub</strong><small>@adpilot_official</small></div></div>
+                                <div class="pc-body ref-body">...</div>
+                                <div class="pc-img ref-img"></div>
+                                <div class="pc-foot"><div><i class="fas fa-link"></i> shop.example.com</div><button class="btn-pc ref-cta">詳細</button></div>
                             </div>
                         </div>
                     </aside>
@@ -430,11 +455,11 @@
                     <div class="view-title"><h2>入稿ステータス管理</h2></div>
                     <div class="status-action-section">
                         <h3>対応が必要なタスク</h3>
-                        <div class="table-container-card mt-15"><table class="saas-table"><thead><tr><th>期限/日時</th><th>媒体</th><th>案件名</th><th>ステータス</th><th>アクション</th></tr></thead><tbody id="status-action-list"></tbody></table></div>
+                        <div class="table-container-card mt-15"><table class="saas-table"><thead><tr><th width="160">最終更新日時</th><th width="100">媒体</th><th>案件名</th><th width="120">作成者</th><th width="120">現在の担当</th><th width="160">ステータス</th><th width="200">操作</th></tr></thead><tbody id="status-action-list"></tbody></table></div>
                     </div>
                     <div class="status-all-section mt-40">
                         <div class="section-header-row"><h3>入稿物一覧</h3><div class="filter-controls"><select class="saas-input sm-input"><option>ステータス: 全て</option></select><select class="saas-input sm-input"><option>申請者: 全て</option></select><button class="btn btn-secondary btn-sm">検索</button></div></div>
-                        <div class="table-container-card mt-15"><table class="saas-table"><thead><tr><th>日時</th><th>媒体</th><th>案件名</th><th>作成者</th><th>現在の担当</th><th>ステータス</th><th>操作</th></tr></thead><tbody id="status-all-list"></tbody></table></div>
+                        <div class="table-container-card mt-15"><table class="saas-table"><thead><tr><th width="160">最終更新日時</th><th width="100">媒体</th><th>案件名</th><th width="120">作成者</th><th width="120">現在の担当</th><th width="160">ステータス</th><th width="200">操作</th></tr></thead><tbody id="status-all-list"></tbody></table></div>
                     </div>
                 </div>
             </div>

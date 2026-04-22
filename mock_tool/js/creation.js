@@ -50,6 +50,52 @@ document.addEventListener('input', (e) => {
     }
 });
 
+// Distribution Settings Change Listeners
+document.addEventListener('change', (e) => {
+    // Media Logo Update & Campaign Population
+    if (e.target.classList.contains('sel-media')) {
+        const sel = e.target;
+        const opt = sel.options[sel.selectedIndex];
+        const logoClass = opt.dataset.logo || 'fas fa-layer-group';
+        const icon = sel.closest('td').querySelector('i');
+        if (icon) icon.className = logoClass;
+
+        const media = sel.value;
+        const row = sel.closest('tr');
+        const cpSel = row.querySelector('.sel-cp');
+        const asSel = row.querySelector('.sel-as');
+        
+        cpSel.innerHTML = '<option>キャンペーン選択</option>';
+        asSel.innerHTML = '<option>アドセット選択</option>';
+        
+        if (media && window.CAMPAIGN_DATA[media]) {
+            Object.keys(window.CAMPAIGN_DATA[media]).forEach(cpName => {
+                const o = document.createElement('option');
+                o.value = cpName; o.innerText = cpName;
+                cpSel.appendChild(o);
+            });
+        }
+    }
+
+    // AdSet Population
+    if (e.target.classList.contains('sel-cp')) {
+        const cpName = e.target.value;
+        const row = e.target.closest('tr');
+        const media = row.querySelector('.sel-media').value;
+        const asSel = row.querySelector('.sel-as');
+        
+        asSel.innerHTML = '<option>アドセット選択</option>';
+        
+        if (media && cpName && window.CAMPAIGN_DATA[media] && window.CAMPAIGN_DATA[media][cpName]) {
+            window.CAMPAIGN_DATA[media][cpName].adsets.forEach(as => {
+                const o = document.createElement('option');
+                o.value = as.name; o.innerText = as.name;
+                asSel.appendChild(o);
+            });
+        }
+    }
+});
+
 let mockImageIdx = 1;
 function getNextMockImage() {
     const img = window.MOCK_IMAGES[`img${mockImageIdx}`];
@@ -93,7 +139,19 @@ window.handleCreationClick = function(e, state, showToast) {
         container.appendChild(nextSlot);
     }
 
-    // Platform Tabs
+    // Image Mode Toggle (Auto / Manual)
+    if (e.target.closest('.m-btn')) {
+        const btn = e.target.closest('.m-btn');
+        const box = btn.closest('.image-box');
+        box.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.dataset.m;
+        box.querySelectorAll('.mode-pane').forEach(p => {
+            p.classList.toggle('active', p.classList.contains(`mode-pane-${mode}`));
+        });
+    }
+
+    // Platform Tab Switching
     const pTab = e.target.closest('.p-tab');
     if (pTab) {
         const section = pTab.closest('.plat-specific-section');
@@ -105,7 +163,7 @@ window.handleCreationClick = function(e, state, showToast) {
         });
     }
 
-    // Materials Management (Clone/Add)
+    // Material Set Management (A, B, C...)
     function getNextSetName(count) { return String.fromCharCode(65 + (count % 26)); }
 
     if (e.target.closest('.btn-copy-card')) {
@@ -140,7 +198,37 @@ window.handleCreationClick = function(e, state, showToast) {
         showToast("新しい素材セットを追加しました");
     }
 
-    // Distribution
+    // Add Field
+    if (e.target.closest('.btn-add-field-bottom')) {
+        const btn = e.target.closest('.btn-add-field-bottom');
+        const type = btn.dataset.type;
+        const container = btn.closest('.field-group').querySelector('.field-container');
+        const row = document.createElement('div');
+        row.className = 'field-row';
+        const inputHtml = type === 'headline' ? `<input type="text" class="input-headline" placeholder="見出しを入力">` : `<textarea class="input-body" placeholder="本文を入力"></textarea>`;
+        row.innerHTML = `<div class="field-input-box">${inputHtml}<div class="field-footer-info"><div class="field-counter-side">0文字</div><div class="field-status-side success">OK</div></div></div><button class="btn-del-field-top">×</button>`;
+        container.appendChild(row);
+        if (card) window.updateCounters(card);
+    }
+
+    // Delete Field
+    if (e.target.closest('.btn-del-field-top')) {
+        const container = e.target.closest('.field-container');
+        if (container.children.length > 1) e.target.closest('.field-row').remove();
+    }
+    
+    // Delete Card
+    if (e.target.closest('.btn-del-card')) {
+        if (document.querySelectorAll('.creative-set-card').length > 1) {
+            e.target.closest('.creative-set-card').remove();
+            window.updateAllDistributionOptions();
+            showToast("素材セットを削除しました");
+            const first = document.querySelector('.creative-set-card');
+            if(first) first.click();
+        }
+    }
+
+    // Distribution Rows Selection Logic (Step 2)
     if (e.target.id === 'btn-add-matrix-row') {
         const table = document.getElementById('flow-matrix-table').querySelector('tbody');
         const row = document.createElement('tr');
@@ -153,7 +241,7 @@ window.handleCreationClick = function(e, state, showToast) {
                         <option value="">媒体を選択</option>
                         <option value="Meta" data-logo="fab fa-facebook">Meta Ads</option>
                         <option value="Google" data-logo="fab fa-google">Google Ads</option>
-                        <option value="Yahoo" data-logo="fab fa-yahoo">Yahoo! JAPAN</option>
+                        <option value="Yahoo" data-logo="fas fa-search">Yahoo! JAPAN</option>
                         <option value="LINE" data-logo="fab fa-line">LINE Ads</option>
                         <option value="TikTok" data-logo="fab fa-tiktok">TikTok Ads</option>
                         <option value="X" data-logo="fab fa-x-twitter">X Ads</option>
@@ -175,7 +263,6 @@ window.handleCreationClick = function(e, state, showToast) {
             <td><button class="btn-icon btn-del-matrix"><i class="fas fa-trash"></i></button></td>
         `;
         table.appendChild(row);
-        initMediaSelect(row.querySelector('.sel-media'));
     }
 
     if (e.target.closest('.ms-label')) {
@@ -183,7 +270,11 @@ window.handleCreationClick = function(e, state, showToast) {
         const pop = box.querySelector('.ms-popover');
         const isActive = pop.classList.contains('active');
         document.querySelectorAll('.ms-popover').forEach(p => p.classList.remove('active'));
-        if (!isActive) pop.classList.add('active');
+        document.querySelectorAll('.ms-box').forEach(b => b.style.zIndex = 'auto');
+        if (!isActive) {
+            pop.classList.add('active');
+            box.style.zIndex = '100';
+        }
         e.stopPropagation();
     }
 
@@ -196,72 +287,29 @@ window.handleCreationClick = function(e, state, showToast) {
         else labelText.innerText = `${checked.length}件選択中`;
     }
 
-    if (!e.target.closest('.ms-box')) document.querySelectorAll('.ms-popover').forEach(p => p.classList.remove('active'));
+    if (!e.target.closest('.ms-box')) {
+        document.querySelectorAll('.ms-popover').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.ms-box').forEach(b => b.style.zIndex = 'auto');
+    }
     if (e.target.closest('.btn-del-matrix')) e.target.closest('tr').remove();
 
     if (e.target.closest('.btn-apply-preview')) {
         window.renderPreview(state.activeCardId);
         showToast("プレビューを更新しました");
     }
-    
-    // Add Field
-    if (e.target.closest('.btn-add-field-bottom')) {
-        const btn = e.target.closest('.btn-add-field-bottom');
-        const type = btn.dataset.type;
-        const container = btn.closest('.field-group').querySelector('.field-container');
-        const row = document.createElement('div');
-        row.className = 'field-row';
-        const inputHtml = type === 'headline' ? `<input type="text" class="input-headline" placeholder="見出しを入力">` : `<textarea class="input-body" placeholder="本文を入力"></textarea>`;
-        row.innerHTML = `<div class="field-input-box">${inputHtml}<div class="field-footer-info"><div class="field-counter-side">0文字</div><div class="field-status-side success">OK</div></div></div><button class="btn-del-field-top">×</button>`;
-        container.appendChild(row);
-        const cardTarget = e.target.closest('.creative-set-card');
-        if (cardTarget) window.updateCounters(cardTarget);
-    }
-    
-    // Delete Field
-    if (e.target.closest('.btn-del-field-top')) {
-        const container = e.target.closest('.field-container');
-        if (container.children.length > 1) e.target.closest('.field-row').remove();
-    }
-    
-    // Delete Card
-    if (e.target.closest('.btn-del-card')) {
-        if (document.querySelectorAll('.creative-set-card').length > 1) {
-            e.target.closest('.creative-set-card').remove();
-            window.updateAllDistributionOptions();
-            showToast("素材セットを削除しました");
-            const first = document.querySelector('.creative-set-card');
-            if(first) first.click();
-        }
-    }
 };
 
-function initMediaSelect(sel) {
-    if (!sel) return;
-    const icon = sel.closest('.custom-media-select-wrapper').querySelector('i');
-    sel.onchange = () => {
-        const opt = sel.options[sel.selectedIndex];
-        icon.className = (opt.dataset.logo || 'fas fa-layer-group');
-        const colors = { Meta: 'var(--meta)', Google: 'var(--google)', Yahoo: 'var(--yahoo)', LINE: 'var(--line)' };
-        icon.style.color = colors[sel.value] || 'inherit';
-        sel.dispatchEvent(new Event('change', { bubbles: true }));
-    };
-}
-
-// Global UI Logic
 window.updateFlow = function(state) {
     document.querySelectorAll('.pane').forEach((p, i) => p.classList.toggle('active', i+1 === state.currentFlowStep));
     document.querySelectorAll('.step').forEach((s, i) => s.classList.toggle('active', i+1 <= state.currentFlowStep && i < 4));
-    const btnPrev = document.getElementById('btn-flow-prev');
-    const btnNext = document.getElementById('btn-flow-next');
+    
     const preview = document.getElementById('creation-preview-sidebar');
     const pBtn = document.getElementById('btn-open-preview');
 
-    if (btnPrev) btnPrev.style.display = (state.currentFlowStep > 1 && state.currentFlowStep < 5) ? 'block' : 'none';
-    if (btnNext) {
-        btnNext.style.display = (state.currentFlowStep < 5) ? 'block' : 'none';
-        btnNext.innerText = state.currentFlowStep === 4 ? "承認依頼を送信" : "次へ進む";
-    }
+    document.getElementById('btn-flow-prev').style.display = (state.currentFlowStep > 1 && state.currentFlowStep < 5) ? 'block' : 'none';
+    const nextBtn = document.getElementById('btn-flow-next');
+    nextBtn.style.display = (state.currentFlowStep < 5) ? 'block' : 'none';
+    nextBtn.innerText = state.currentFlowStep === 4 ? "承認依頼を送信" : "次へ進む";
     
     if (preview) {
         if (state.currentFlowStep > 1) {
@@ -275,8 +323,3 @@ window.updateFlow = function(state) {
     if (state.currentFlowStep === 3 && window.renderStep3) window.renderStep3();
     if (state.currentFlowStep === 4 && window.renderStep4) window.renderStep4();
 };
-
-// Initial setup
-setTimeout(() => {
-    document.querySelectorAll('.sel-media').forEach(sel => initMediaSelect(sel));
-}, 500);
